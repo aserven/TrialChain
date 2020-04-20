@@ -43,9 +43,9 @@ newtype State = State
   { transactions :: TVar [Transaction]
   }
 
-type AppM = ReaderT State Handler
+type AppState = ReaderT State Handler
 
-server :: ServerT TrialChainAPI AppM
+server :: ServerT TrialChainAPI AppState
 server = broadcastTransaction :<|> getTransaction :<|> allTransactions
 
 -- | Rules that will be applied when trying to broadcast a transaction
@@ -55,7 +55,7 @@ activeRules =
 
 -- | Broadcast new transaction to the netowrk
 -- TODO: Should broadcast calling urls with the new transaction
-broadcastTransaction :: SimpleTransaction -> AppM Text
+broadcastTransaction :: SimpleTransaction -> AppState Text
 broadcastTransaction t = do
   State {transactions = txs} <- ask
   transactionList <- liftIO $ readTVarIO txs
@@ -68,7 +68,7 @@ broadcastTransaction t = do
       pure $ txid (newTransaction :: Transaction)
 
 -- | Get a transaction from server
-getTransaction :: TransactionId -> AppM Transaction
+getTransaction :: TransactionId -> AppState Transaction
 getTransaction TransactionId {txid = txIdentifier} = do
   State {transactions = txs} <- ask
   transactionList <- liftIO $ readTVarIO txs
@@ -77,12 +77,12 @@ getTransaction TransactionId {txid = txIdentifier} = do
     Just t -> pure t
 
 -- | List transactions broadcasted so far
-allTransactions :: AppM [Transaction]
+allTransactions :: AppState [Transaction]
 allTransactions = do
   State {transactions = txs} <- ask
   liftIO $ readTVarIO txs
 
-nt :: State -> AppM a -> Handler a
+nt :: State -> AppState a -> Handler a
 nt s x = runReaderT x s
 
 app :: State -> Application

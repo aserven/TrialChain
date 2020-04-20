@@ -155,7 +155,6 @@ verifySignature (key, msg, s) = do
   pk <- getFromFile key
   message <- getFromFile msg
   signature <- getFromFile s
-  createRandomTransaction
   case verify pk message signature of
     Left reason -> putStrLn $ "Something went wrong verifying: " ++ show reason
     Right result -> putStrLn $ "Signature is " ++ show result
@@ -186,7 +185,7 @@ createTransaction (from, secret, to, a, out) = do
         , ("    \"signature\": \"" <> signature <> "\"\n")
         , "}"
         ]
-      putStrLn $ "Created transaction in " ++ output
+      putStrLn $ "Created transaction in \"" ++ output ++ "\""
 
 createRandomTransaction :: IO ()
 createRandomTransaction = do
