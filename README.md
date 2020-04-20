@@ -217,6 +217,8 @@ With the transactions that we have generated previously we can test now the API 
 - Apply the rule that checks if the sender has enough money. We can do it with:
     - Add special transactions that can bypass this rule so we can populate the blockchain with initial transactions.
     - Add manually some initial transactions before starting the server.
+- Use a database to store transactions.
+- Implement blockchain blocks and store there the transactions.
 - Add property checking tests and improve coverage.
 - Setup CI/CD pipeline.
 - Dockerize the application.
